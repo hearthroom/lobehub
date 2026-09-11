@@ -1,3 +1,4 @@
+import { appEnv } from '@/envs/app';
 import { authEnv } from '@/envs/auth';
 
 import { type GenericProviderDefinition } from '../types';
@@ -13,6 +14,15 @@ import { type GenericProviderDefinition } from '../types';
  */
 export const DEFAULT_LUNATALK_ISSUER = 'https://api.lunatalk.ai';
 export const LUNATALK_SCOPE = 'mcp:card-writer';
+
+type LunaTalkTokenResponse = {
+  access_token?: string;
+  error?: string;
+  expires_in?: number;
+  refresh_token?: string;
+  scope?: string;
+  token_type?: string;
+};
 
 type LunaTalkMe = {
   accountNumId?: number | string;
@@ -30,12 +40,58 @@ const provider: GenericProviderDefinition<{
   build: (env) => {
     const issuer = normalizeIssuer(env.AUTH_LUNATALK_ISSUER);
     const resource = `${issuer}/open/v1`;
+    const clientId = env.AUTH_LUNATALK_ID;
+    // Must match the URL used in the authorize request (LobeHub routes generic providers through
+    // the builtin `/api/auth/callback/<id>` path), because LunaTalk compares it on token exchange.
+    const redirectURI = `${appEnv.APP_URL}/api/auth/callback/lunatalk`;
 
     return {
-      authentication: 'post',
       authorizationUrl: `${issuer}/oauth/authorize`,
       authorizationUrlParams: { resource },
-      clientId: env.AUTH_LUNATALK_ID,
+      clientId,
+
+      /**
+       * Exchange the code ourselves: LunaTalk requires the `resource` indicator on the token
+       * request too, and Better-Auth's builtin callback path drops `tokenUrlParams`.
+       */
+      getToken: async ({ code, codeVerifier }) => {
+        const body = new URLSearchParams({
+          client_id: clientId,
+          code,
+          grant_type: 'authorization_code',
+          redirect_uri: redirectURI,
+          resource,
+        });
+        if (codeVerifier) body.set('code_verifier', codeVerifier);
+
+        const response = await fetch(`${issuer}/oauth/token`, {
+          body,
+          cache: 'no-store',
+          headers: {
+            'accept': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded',
+          },
+          method: 'POST',
+        });
+        const data = (await response.json().catch(() => ({}))) as LunaTalkTokenResponse;
+
+        if (!response.ok || !data.access_token) {
+          throw new Error(`LunaTalk token exchange failed: ${data.error ?? response.status}`);
+        }
+
+        return {
+          accessToken: data.access_token,
+          accessTokenExpiresAt: data.expires_in
+            ? new Date(Date.now() + data.expires_in * 1000)
+            : undefined,
+          expiresIn: data.expires_in,
+          raw: data,
+          refreshToken: data.refresh_token,
+          refreshTokenExpiresAt: undefined,
+          scopes: data.scope ? data.scope.split(' ').filter(Boolean) : [LUNATALK_SCOPE],
+          tokenType: data.token_type ?? 'Bearer',
+        };
+      },
 
       /**
        * `/open/v1/me` returns the public identity only (numeric account id, nickname, avatar).
@@ -67,9 +123,9 @@ const provider: GenericProviderDefinition<{
 
       pkce: true,
       providerId: 'lunatalk',
+      redirectURI,
       scopes: [LUNATALK_SCOPE],
       tokenUrl: `${issuer}/oauth/token`,
-      tokenUrlParams: { resource },
     };
   },
 
