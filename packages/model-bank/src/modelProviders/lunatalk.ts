@@ -9,7 +9,7 @@ import type { ModelProviderCard } from '../types';
  */
 const LunaTalk: ModelProviderCard = {
   chatModels: [],
-  checkModel: 'deepseek-v4-flash',
+  checkModel: 'deepseek-v4-flash-ripple',
   description:
     'Use the models LunaTalk runs, paid with your LunaTalk points. Sign in with LunaTalk and no API key is needed.',
   disableBrowserRequest: true,
