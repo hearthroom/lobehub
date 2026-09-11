@@ -141,6 +141,7 @@ export default {
   'betterAuth.signin.continueWithGoogle': 'Continue with Google',
   'betterAuth.signin.continueWithKeycloak': 'Sign in with Keycloak',
   'betterAuth.signin.continueWithLogto': 'Sign in with Logto',
+  'betterAuth.signin.continueWithLunatalk': 'Sign in with LunaTalk',
   'betterAuth.signin.continueWithMicrosoft': 'Continue with Microsoft',
   'betterAuth.signin.continueWithOIDC': 'Sign in with OIDC',
   'betterAuth.signin.continueWithOkta': 'Sign in with Okta',

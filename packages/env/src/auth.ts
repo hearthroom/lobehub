@@ -67,16 +67,19 @@ declare global {
       AUTH_LOGTO_ISSUER?: string;
       AUTH_LOGTO_SECRET?: string;
 
+      AUTH_LUNATALK_ID?: string;
+      AUTH_LUNATALK_ISSUER?: string;
       AUTH_MICROSOFT_AUTHORITY_URL?: string;
+
       AUTH_MICROSOFT_ID?: string;
       AUTH_MICROSOFT_SECRET?: string;
-
       AUTH_MICROSOFT_TENANT_ID?: string;
+
       AUTH_OKTA_ID?: string;
       AUTH_OKTA_ISSUER?: string;
-
       AUTH_OKTA_SECRET?: string;
       AUTH_SECRET?: string;
+
       AUTH_SSO_PROVIDERS?: string;
       AUTH_TRUSTED_ORIGINS?: string;
 
@@ -184,6 +187,9 @@ export const getAuthConfig = () => {
       AUTH_OKTA_SECRET: z.string().optional(),
       AUTH_OKTA_ISSUER: z.string().optional(),
 
+      AUTH_LUNATALK_ID: z.string().optional(),
+      AUTH_LUNATALK_ISSUER: z.string().optional(),
+
       AUTH_WECHAT_ID: z.string().optional(),
       AUTH_WECHAT_SECRET: z.string().optional(),
 
@@ -278,6 +284,9 @@ export const getAuthConfig = () => {
       AUTH_OKTA_ID: process.env.AUTH_OKTA_ID,
       AUTH_OKTA_SECRET: process.env.AUTH_OKTA_SECRET,
       AUTH_OKTA_ISSUER: process.env.AUTH_OKTA_ISSUER,
+
+      AUTH_LUNATALK_ID: process.env.AUTH_LUNATALK_ID,
+      AUTH_LUNATALK_ISSUER: process.env.AUTH_LUNATALK_ISSUER,
 
       AUTH_WECHAT_ID: process.env.AUTH_WECHAT_ID,
       AUTH_WECHAT_SECRET: process.env.AUTH_WECHAT_SECRET,

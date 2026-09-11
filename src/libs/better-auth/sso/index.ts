@@ -19,6 +19,7 @@ import Github from './providers/github';
 import Google from './providers/google';
 import Keycloak from './providers/keycloak';
 import Logto from './providers/logto';
+import LunaTalk from './providers/lunatalk';
 import Microsoft from './providers/microsoft';
 import Okta from './providers/okta';
 import Wechat from './providers/wechat';
@@ -38,6 +39,7 @@ const providerDefinitions = [
   GenericOIDC,
   Keycloak,
   Logto,
+  LunaTalk,
   Okta,
   Zitadel,
   Feishu,
