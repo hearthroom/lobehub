@@ -184,6 +184,9 @@ export const getLLMConfig = () => {
       ENABLED_PPIO: z.boolean(),
       PPIO_API_KEY: z.string().optional(),
 
+      ENABLED_LUNATALK: z.boolean(),
+      LUNATALK_API_KEY: z.string().optional(),
+
       ENABLED_SEARCH1API: z.boolean(),
       SEARCH1API_API_KEY: z.string().optional(),
 
@@ -440,6 +443,11 @@ export const getLLMConfig = () => {
 
       ENABLED_PPIO: !!process.env.PPIO_API_KEY,
       PPIO_API_KEY: process.env.PPIO_API_KEY,
+
+      // LunaTalk is normally credentialed per user (SSO token); LUNATALK_API_KEY only
+      // exists so LUNATALK_PROXY_URL is honored and a shared key can be set for tests.
+      ENABLED_LUNATALK: !!process.env.LUNATALK_API_KEY,
+      LUNATALK_API_KEY: process.env.LUNATALK_API_KEY,
 
       ENABLED_SEARCH1API: !!process.env.SEARCH1API_API_KEY,
       SEARCH1API_API_KEY: process.env.SEARCH1API_API_KEY,
