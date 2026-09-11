@@ -67,6 +67,7 @@
     "./opencodeZen": "./src/aiModels/opencodeZen.ts",
     "./openrouter": "./src/aiModels/openrouter.ts",
     "./perplexity": "./src/aiModels/perplexity.ts",
+    "./lunatalk": "./src/aiModels/lunatalk.ts",
     "./ppio": "./src/aiModels/ppio.ts",
     "./qiniu": "./src/aiModels/qiniu.ts",
     "./qwen": "./src/aiModels/qwen.ts",

@@ -41,6 +41,7 @@ import { type LobeChatDatabase } from '@/database/type';
 import { getLLMConfig } from '@/envs/llm';
 import { getServerGlobalConfig } from '@/server/globalConfig';
 import { createLLMGenerationTracingHook } from '@/server/services/llmGenerationTracing/hook';
+import { ensureLunaTalkAccessToken } from '@/server/services/lunatalkToken';
 import { ensureFreshOAuthToken } from '@/server/services/oauthDeviceFlow/refresh';
 
 import { KeyVaultsGateKeeper } from '../KeyVaultsEncrypt';
@@ -515,6 +516,15 @@ export const initModelRuntimeFromDB = async (
       workspaceId,
     });
     keyVaults = { ...keyVaults, ...freshKeyVaults } as ProviderKeyVaults;
+  }
+
+  // 3.6. LunaTalk: the credential is the user's own LunaTalk OAuth access token
+  // (obtained at sign-in), refreshed here when it is about to expire. Nothing
+  // is ever typed into the provider settings; an empty result simply leaves
+  // the payload without a key so the upstream 401 surfaces as usual.
+  if (provider === ModelProvider.LunaTalk && !keyVaults.apiKey) {
+    const accessToken = await ensureLunaTalkAccessToken(db, userId);
+    if (accessToken) keyVaults = { ...keyVaults, apiKey: accessToken } as ProviderKeyVaults;
   }
 
   const payload = buildPayloadFromKeyVaults(keyVaults, runtimeProvider);

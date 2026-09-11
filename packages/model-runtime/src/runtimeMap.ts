@@ -36,6 +36,7 @@ import { LobeKimiCodingPlanAI } from './providers/kimiCodingPlan';
 import { LobeLMStudioAI } from './providers/lmstudio';
 import { LobeHubAI } from './providers/lobehub';
 import { LobeLongCatAI } from './providers/longcat';
+import { LobeLunaTalkAI } from './providers/lunatalk';
 import { LobeMetaAI } from './providers/meta';
 import { LobeMinimaxAI } from './providers/minimax';
 import { LobeMinimaxCodingPlanAI } from './providers/minimaxCodingPlan';
@@ -140,6 +141,7 @@ export const providerRuntimeMap = {
   openai: LobeOpenAI,
   openrouter: LobeOpenRouterAI,
   perplexity: LobePerplexityAI,
+  lunatalk: LobeLunaTalkAI,
   ppio: LobePPIOAI,
   qiniu: LobeQiniuAI,
   qwen: LobeQwenAI,

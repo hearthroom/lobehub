@@ -39,6 +39,7 @@ import KimiCodingPlanProvider from './kimiCodingPlan';
 import LMStudioProvider from './lmstudio';
 import LobeHubProvider from './lobehub';
 import LongCatProvider from './longcat';
+import LunaTalkProvider from './lunatalk';
 import MetaProvider from './meta';
 import MinimaxProvider from './minimax';
 import MinimaxCodingPlanProvider from './minimaxCodingPlan';
@@ -137,6 +138,7 @@ export const LOBE_DEFAULT_MODEL_LIST: ChatModelCard[] = [
   SenseNovaProvider.chatModels,
   InternLMProvider.chatModels,
   HigressProvider.chatModels,
+  LunaTalkProvider.chatModels,
   PPIOProvider.chatModels,
   Search1APIProvider.chatModels,
   InfiniAIProvider.chatModels,
@@ -183,6 +185,7 @@ export const DEFAULT_MODEL_PROVIDER_LIST = [
   BflProvider,
   NovitaProvider,
   PPIOProvider,
+  LunaTalkProvider,
   Ai302Provider,
   NvidiaProvider,
   TogetherAIProvider,
@@ -295,6 +298,7 @@ export { default as KimiCodingPlanProviderCard } from './kimiCodingPlan';
 export { default as LMStudioProviderCard } from './lmstudio';
 export { default as LobeHubProviderCard } from './lobehub';
 export { default as LongCatProviderCard } from './longcat';
+export { default as LunaTalkProviderCard } from './lunatalk';
 export { default as MetaProviderCard } from './meta';
 export { default as MinimaxProviderCard } from './minimax';
 export { default as MinimaxCodingPlanProviderCard } from './minimaxCodingPlan';
