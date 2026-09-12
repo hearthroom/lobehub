@@ -10,6 +10,7 @@ import { labPreferSelectors } from '@/store/user/selectors';
 
 import AgentConnectors from './AgentConnectors';
 import AgentGraphRuntime from './AgentGraphRuntime';
+import AgentLunaTalk from './AgentLunaTalk';
 import AgentOpening from './AgentOpening';
 import AgentSelfIteration from './AgentSelfIteration';
 
@@ -31,6 +32,7 @@ const AgentSettingsContent = memo<AgentSettingsContentProps>(({ tab, loadingSkel
       {enableAgentSelfIteration && tab === ChatSettingsTabs.SelfIteration && <AgentSelfIteration />}
       {enableAgentGraphConfigLab && tab === ChatSettingsTabs.Graph && <AgentGraphRuntime />}
       {tab === ChatSettingsTabs.Connector && <AgentConnectors />}
+      {tab === ChatSettingsTabs.LunaTalk && <AgentLunaTalk />}
     </>
   );
 });

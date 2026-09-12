@@ -25,6 +25,7 @@ export enum SidebarTabKey {
 export enum ChatSettingsTabs {
   Connector = 'connector',
   Graph = 'graph',
+  LunaTalk = 'lunatalk',
   Opening = 'opening',
   Plugin = 'plugin',
   Prompt = 'prompt',

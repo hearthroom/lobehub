@@ -68,6 +68,7 @@ import { klavisRouter } from './klavis';
 import { knowledgeRouter } from './knowledge';
 import { knowledgeBaseRouter } from './knowledgeBase';
 import { llmGenerationTracingRouter } from './llmGenerationTracing';
+import { lunatalkRoleCardRouter } from './lunatalkRoleCard';
 import { marketRouter } from './market';
 import { messageRouter } from './message';
 import { messengerRouter } from './messenger';
@@ -164,6 +165,7 @@ export const lambdaRouter = router({
   oauthDeviceFlow: oauthDeviceFlowRouter,
   plugin: pluginRouter,
   project: projectRouter,
+  lunatalkRoleCard: lunatalkRoleCardRouter,
   pushToken: pushTokenRouter,
   ragEval: ragEvalRouter,
   recent: recentRouter,

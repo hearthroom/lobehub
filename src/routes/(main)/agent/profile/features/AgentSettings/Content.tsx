@@ -1,7 +1,12 @@
 'use client';
 
 import isEqual from 'fast-deep-equal';
-import { ActivityIcon, GitBranchIcon, MessageSquareHeartIcon } from 'lucide-react';
+import {
+  ActivityIcon,
+  GitBranchIcon,
+  MessageSquareHeartIcon,
+  UserRoundPenIcon,
+} from 'lucide-react';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { shallow } from 'zustand/shallow';
@@ -22,6 +27,7 @@ import { labPreferSelectors } from '@/store/user/selectors';
 
 const TAB_META = {
   [ChatSettingsTabs.Graph]: { icon: GitBranchIcon, labelKey: 'agentTab.graph' },
+  [ChatSettingsTabs.LunaTalk]: { icon: UserRoundPenIcon, labelKey: 'agentTab.lunatalk' },
   [ChatSettingsTabs.Opening]: { icon: MessageSquareHeartIcon, labelKey: 'agentTab.opening' },
   [ChatSettingsTabs.SelfIteration]: {
     icon: ActivityIcon,
@@ -50,8 +56,9 @@ const Content = memo(() => {
         ChatSettingsTabs.Opening,
         enableAgentSelfIteration ? ChatSettingsTabs.SelfIteration : null,
         showGraphTab ? ChatSettingsTabs.Graph : null,
+        isInbox ? null : ChatSettingsTabs.LunaTalk,
       ].filter(Boolean) as ChatSettingsTabs[],
-    [enableAgentSelfIteration, showGraphTab],
+    [enableAgentSelfIteration, showGraphTab, isInbox],
   );
 
   const activeTab = availableTabs.includes(tab) ? tab : availableTabs[0];

@@ -93,7 +93,7 @@ describe('AgentSettings Content', () => {
     );
   });
 
-  it('exposes both tabs when not inbox and feature is on', () => {
+  it('exposes both tabs plus the LunaTalk card tab when not inbox and feature is on', () => {
     mocks.agentState.isInbox = false;
 
     render(<Content />);
@@ -102,7 +102,7 @@ describe('AgentSettings Content', () => {
     expect(layout).toHaveAttribute('data-active', ChatSettingsTabs.Opening);
     expect(layout).toHaveAttribute(
       'data-tabs',
-      `${ChatSettingsTabs.Opening},${ChatSettingsTabs.SelfIteration}`,
+      `${ChatSettingsTabs.Opening},${ChatSettingsTabs.SelfIteration},${ChatSettingsTabs.LunaTalk}`,
     );
   });
 
@@ -116,13 +116,16 @@ describe('AgentSettings Content', () => {
     expect(layout).toHaveAttribute('data-tabs', ChatSettingsTabs.Opening);
   });
 
-  it('exposes only opening when feature flag is off', () => {
+  it('exposes opening and the LunaTalk card tab when feature flag is off', () => {
     mocks.agentState.isInbox = false;
     mocks.serverState.featureFlags.enableAgentSelfIteration = false;
 
     render(<Content />);
 
     const layout = screen.getByTestId('layout');
-    expect(layout).toHaveAttribute('data-tabs', ChatSettingsTabs.Opening);
+    expect(layout).toHaveAttribute(
+      'data-tabs',
+      `${ChatSettingsTabs.Opening},${ChatSettingsTabs.LunaTalk}`,
+    );
   });
 });

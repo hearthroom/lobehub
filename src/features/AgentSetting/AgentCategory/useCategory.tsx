@@ -1,6 +1,6 @@
 import { Icon } from '@lobehub/ui';
 import { type MenuItemType } from 'antd/es/menu/interface';
-import { Activity, Bot, Handshake, LinkIcon } from 'lucide-react';
+import { Activity, Bot, Handshake, LinkIcon, UserRoundPenIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -43,6 +43,11 @@ export const useCategory = ({ mobile }: UseCategoryOptions = {}) => {
           key: ChatSettingsTabs.Connector,
           label: t('agentTab.connector', 'Connectors'),
         },
+        (!isInbox && {
+          icon: <Icon icon={UserRoundPenIcon} size={iconSize} />,
+          key: ChatSettingsTabs.LunaTalk,
+          label: t('agentTab.lunatalk'),
+        }) as MenuItemType,
       ].filter(Boolean) as MenuProps['items'],
     [t, isInbox, iconSize, enableAgentSelfIteration],
   );
