@@ -20,6 +20,7 @@ import { registerExternalWork } from './external';
 import { findFileWorkVersionByToolCall, registerFileWork } from './file';
 import { normalizeGithubShellToolResult, normalizeGithubToolResult } from './githubToolResult';
 import { normalizeLinearToolResult } from './linearToolResult';
+import { isLunaTalkWorkTool, normalizeLunaTalkToolResult } from './lunatalkToolResult';
 import * as queries from './queries';
 import { registerTaskWork } from './task';
 import type { ExternalToolWorkOperation } from './toolResultParsing';
@@ -34,6 +35,7 @@ import * as writes from './writes';
 const SKILL_TOOL_RESULT_NORMALIZERS = {
   github: normalizeGithubToolResult,
   linear: normalizeLinearToolResult,
+  lunatalk: normalizeLunaTalkToolResult,
 } satisfies Record<
   WorkSkillProvider,
   (input: SkillToolResultWorkInput) => ExternalToolWorkOperation | null
@@ -148,3 +150,5 @@ export class WorkModel {
 
   listVersions = (workId: string) => queries.listVersions(this.ctx, workId);
 }
+
+export { isLunaTalkWorkTool };

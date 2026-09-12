@@ -2,6 +2,7 @@ import { type ChatToolPayload } from '@lobechat/types';
 import { isLocalOrPrivateUrl, safeParseJSON } from '@lobechat/utils';
 import debug from 'debug';
 
+import { isLunaTalkWorkTool } from '@/database/models/work';
 import { ConnectorToolPermission } from '@/database/schemas';
 import {
   type CloudMCPParams,
@@ -118,6 +119,21 @@ export class ToolExecutionService {
       switch (typeStr) {
         case 'mcp': {
           data = await this.executeMCPTool(payload, context);
+          // LunaTalk card-writer writes become `external` Works (role / worldbook /
+          // theme / mod) through the same deferred skill-intent path GitHub and
+          // Linear use; the DB normalizer decides identity and drops reads.
+          if (data.success && isLunaTalkWorkTool(apiName)) {
+            data = {
+              ...data,
+              workRegistration: {
+                args: safeParseJSON(payload.arguments) ?? undefined,
+                data: data.state ?? data.content,
+                provider: 'lunatalk',
+                toolName: apiName,
+                type: 'skill',
+              },
+            };
+          }
           break;
         }
 

@@ -170,6 +170,18 @@ const workTypeKey = (item: WorkSummaryItem) => {
     case 'linear_issue': {
       return 'work.type.linearIssue';
     }
+    case 'lunatalk_mod': {
+      return 'work.type.lunatalkMod';
+    }
+    case 'lunatalk_role': {
+      return 'work.type.lunatalkRole';
+    }
+    case 'lunatalk_theme': {
+      return 'work.type.lunatalkTheme';
+    }
+    case 'lunatalk_worldbook': {
+      return 'work.type.lunatalkWorldbook';
+    }
     case 'task': {
       return 'work.type.task';
     }

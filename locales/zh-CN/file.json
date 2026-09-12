@@ -318,6 +318,10 @@
   "work.type.githubPullRequest": "GitHub PR",
   "work.type.linearDocument": "Linear 文档",
   "work.type.linearIssue": "Linear Issue",
+  "work.type.lunatalkMod": "LunaTalk 模组",
+  "work.type.lunatalkRole": "LunaTalk 角色卡",
+  "work.type.lunatalkTheme": "LunaTalk 主题",
+  "work.type.lunatalkWorldbook": "LunaTalk 世界书",
   "work.type.task": "任务",
   "work.updatedAt": "更新于 {{date}}"
 }

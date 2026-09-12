@@ -372,4 +372,79 @@ describe('ToolExecutionService', () => {
       expect(callTool).toHaveBeenCalledTimes(1);
     });
   });
+
+  // LunaTalk card-writer writes ride the same deferred skill Work intent as
+  // GitHub / Linear; reads must stay plain tool results.
+  describe('LunaTalk card-writer Work tagging', () => {
+    const makeService = (callTool = vi.fn()) =>
+      new ToolExecutionService({
+        builtinToolsExecutor: { execute: vi.fn() } as any,
+        mcpService: { callTool } as any,
+      });
+    const context = {
+      toolManifestMap: {
+        'lunatalk-card-writer': {
+          mcpParams: { type: 'http', url: 'https://api.lunatalk.ai/mcp/card-writer' },
+        },
+      },
+    } as any;
+    const mcpResult = { content: '{"roleId":"role-1"}', state: { content: [] }, success: true };
+
+    beforeEach(() => {
+      (deviceGateway as any).isConfigured = false;
+    });
+
+    it('attaches a lunatalk skill intent carrying the untruncated result to write tools', async () => {
+      const service = makeService(vi.fn().mockResolvedValue(mcpResult));
+
+      const result = await service.executeTool(
+        {
+          apiName: 'role_create_private',
+          arguments: '{"roleName":"月光偵探"}',
+          id: 'tool-call-1',
+          identifier: 'lunatalk-card-writer',
+          type: 'mcp',
+        } as any,
+        { ...context, toolResultMaxLength: 5 },
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.workRegistration).toEqual({
+        args: { roleName: '月光偵探' },
+        data: mcpResult,
+        provider: 'lunatalk',
+        toolName: 'role_create_private',
+        type: 'skill',
+      });
+    });
+
+    it('leaves reads and failed calls untagged', async () => {
+      const service = makeService(vi.fn().mockResolvedValue(mcpResult));
+      const read = await service.executeTool(
+        {
+          apiName: 'role_get',
+          arguments: '{}',
+          id: 'c2',
+          identifier: 'lunatalk-card-writer',
+          type: 'mcp',
+        } as any,
+        context,
+      );
+      expect(read.workRegistration).toBeUndefined();
+
+      const failing = makeService(vi.fn().mockRejectedValue(new Error('boom')));
+      const failed = await failing.executeTool(
+        {
+          apiName: 'role_patch_detail',
+          arguments: '{}',
+          id: 'c3',
+          identifier: 'lunatalk-card-writer',
+          type: 'mcp',
+        } as any,
+        context,
+      );
+      expect(failed.success).toBe(false);
+      expect(failed.workRegistration).toBeUndefined();
+    });
+  });
 });

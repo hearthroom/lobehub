@@ -318,6 +318,10 @@
   "work.type.githubPullRequest": "GitHub PR",
   "work.type.linearDocument": "Linear Document",
   "work.type.linearIssue": "Linear Issue",
+  "work.type.lunatalkMod": "LunaTalk Mod",
+  "work.type.lunatalkRole": "LunaTalk Role Card",
+  "work.type.lunatalkTheme": "LunaTalk Theme",
+  "work.type.lunatalkWorldbook": "LunaTalk Worldbook",
   "work.type.task": "Task",
   "work.updatedAt": "Updated {{date}}"
 }

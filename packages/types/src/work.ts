@@ -3,8 +3,12 @@ import type { TaskStatus } from './task';
 export type WorkType = 'document' | 'external' | 'file' | 'task';
 export type LinearWorkResourceType = 'linear_document' | 'linear_issue';
 export type GithubWorkResourceType = 'github_issue' | 'github_pull_request';
+/** LunaTalk creator resources written through the card-writer MCP connector. */
+export type LunaTalkWorkResourceType =
+  'lunatalk_mod' | 'lunatalk_role' | 'lunatalk_theme' | 'lunatalk_worldbook';
 /** Every resource type backed by the unified `external` Work type. */
-export type ExternalWorkResourceType = GithubWorkResourceType | LinearWorkResourceType;
+export type ExternalWorkResourceType =
+  GithubWorkResourceType | LinearWorkResourceType | LunaTalkWorkResourceType;
 export type WorkResourceType = 'document' | ExternalWorkResourceType | 'file' | 'task';
 export type WorkVisibility = 'private' | 'public';
 /**
@@ -373,7 +377,7 @@ export interface RegisterExternalWorkParams {
  * Adding a provider = extend this list + `WORK_PROVIDER_RESOURCE_TYPES` below +
  * add one normalizer in the DB registry.
  */
-export const WORK_SKILL_PROVIDERS = ['github', 'linear'] as const;
+export const WORK_SKILL_PROVIDERS = ['github', 'linear', 'lunatalk'] as const;
 export type WorkSkillProvider = (typeof WORK_SKILL_PROVIDERS)[number];
 
 export const isWorkSkillProvider = (provider?: string | null): provider is WorkSkillProvider =>
@@ -391,6 +395,7 @@ export const WORK_PROVIDER_RESOURCE_TYPES: Record<
 > = {
   github: ['github_issue', 'github_pull_request'],
   linear: ['linear_document', 'linear_issue'],
+  lunatalk: ['lunatalk_mod', 'lunatalk_role', 'lunatalk_theme', 'lunatalk_worldbook'],
 };
 
 /** Reverse lookup of `WORK_PROVIDER_RESOURCE_TYPES`, built once at module scope. */

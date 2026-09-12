@@ -10,13 +10,17 @@ import {
 import { Github } from '@lobehub/icons';
 import { FileTypeIcon as FileTypeBadge } from '@lobehub/ui';
 import {
+  BookOpenIcon,
   ClipboardListIcon,
   FileBoxIcon,
   FileSpreadsheetIcon,
   FileTextIcon,
   FileTypeIcon,
   LinkIcon,
+  PaletteIcon,
   PresentationIcon,
+  PuzzleIcon,
+  UserRoundPenIcon,
 } from 'lucide-react';
 import type { ComponentType } from 'react';
 
@@ -34,6 +38,15 @@ type WorkIcon = ComponentType<{ className?: string; size?: number }>;
 const PROVIDER_ICONS: Record<WorkSkillProvider, WorkIcon> = {
   github: Github,
   linear: LinearIcon,
+  lunatalk: UserRoundPenIcon,
+};
+
+/** LunaTalk resources are visually distinct kinds, not one brand: pick per resource type. */
+const LUNATALK_RESOURCE_ICONS: Partial<Record<string, WorkIcon>> = {
+  lunatalk_mod: PuzzleIcon,
+  lunatalk_role: UserRoundPenIcon,
+  lunatalk_theme: PaletteIcon,
+  lunatalk_worldbook: BookOpenIcon,
 };
 
 /**
@@ -220,6 +233,8 @@ export const WORK_TYPE_DESCRIPTORS: {
     // Resolve the brand icon from the item's provider; unknown providers fall
     // back to a generic link glyph (forward-compat).
     getIcon: (item) => {
+      const kindIcon = LUNATALK_RESOURCE_ICONS[item.resourceType];
+      if (kindIcon) return kindIcon;
       const provider = workProviderOfResourceType(item.resourceType);
       return provider ? PROVIDER_ICONS[provider] : LinkIcon;
     },
