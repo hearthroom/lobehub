@@ -111,7 +111,7 @@ const unwrapPayload = (data: unknown): Record<string, unknown> | null => {
   if (structured) return structured;
 
   if (Array.isArray(record.content)) {
-    return toRecord(parseMaybeJSON(textFromBlocks(record.content)));
+    return toRecord(parseMaybeJSON(textFromBlocks(record.content))) ?? null;
   }
   if (typeof record.content === 'string') {
     return toRecord(parseMaybeJSON(record.content)) ?? record;

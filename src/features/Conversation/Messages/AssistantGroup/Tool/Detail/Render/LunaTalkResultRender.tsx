@@ -78,7 +78,7 @@ const unwrap = (content: string): Record<string, unknown> | null => {
   return record;
 };
 
-export const parseLunaTalkResult = (content?: string): LunaTalkVisualResult | null => {
+export const parseLunaTalkResult = (content?: string | null): LunaTalkVisualResult | null => {
   if (!content) return null;
   const payload = unwrap(content);
   if (!payload) return null;
