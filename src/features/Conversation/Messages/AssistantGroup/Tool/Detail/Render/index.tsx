@@ -1,9 +1,10 @@
 import { getBuiltinRender } from '@lobechat/builtin-tools/renders';
 import { type ChatPluginPayload } from '@lobechat/types';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 
 import CustomRender from './CustomRender';
 import { FallbackArgumentRender } from './FallbacktArgumentRender';
+import LunaTalkResultRender, { parseLunaTalkResult } from './LunaTalkResultRender';
 
 interface ToolRenderProps {
   content: string;
@@ -17,6 +18,22 @@ interface ToolRenderProps {
 const ToolRender = memo<ToolRenderProps>(
   ({ showCustomToolRender, content, messageId, plugin, pluginState, toolCallId }) => {
     const hasCustomRender = !!getBuiltinRender(plugin?.identifier, plugin?.apiName);
+    // MCP connectors get no builtin render; LunaTalk card-writer previews and
+    // validation reports are recognised by shape instead of by identifier.
+    const lunatalkResult = useMemo(
+      () => (hasCustomRender ? null : parseLunaTalkResult(content)),
+      [content, hasCustomRender],
+    );
+
+    if (lunatalkResult) {
+      return (
+        <LunaTalkResultRender
+          requestArgs={plugin?.arguments}
+          result={lunatalkResult}
+          toolCallId={toolCallId}
+        />
+      );
+    }
 
     if (hasCustomRender && showCustomToolRender) {
       return (

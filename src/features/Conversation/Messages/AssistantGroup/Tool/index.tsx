@@ -5,7 +5,7 @@ import { AccordionItem, Flexbox } from '@lobehub/ui';
 import { Skeleton } from '@lobehub/ui/base-ui';
 import { Divider } from 'antd';
 import isEqual from 'fast-deep-equal';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 import SafeBoundary from '@/components/ErrorBoundary';
 import dynamic from '@/libs/next/dynamic';
@@ -16,6 +16,7 @@ import { toolSelectors } from '@/store/tool/selectors';
 
 import { dataSelectors, useConversationStore } from '../../../store';
 import Actions from './Actions';
+import { parseLunaTalkResult } from './Detail/Render/LunaTalkResultRender';
 import Inspectors from './Inspector';
 
 const Debug = dynamic(() => import('./Debug'), {
@@ -123,6 +124,15 @@ const Tool = memo<GroupToolProps>(({ assistantMessageId, disableEditing, id }) =
       setTimeout(() => handleExpand(true), 100);
     }
   }, [needExpand]);
+
+  // A card preview or validation report is the point of the call: open it.
+  const hasLunaTalkVisual = useMemo(
+    () => !!parseLunaTalkResult(result?.content),
+    [result?.content],
+  );
+  useEffect(() => {
+    if (hasLunaTalkVisual) setShowToolRender(true);
+  }, [hasLunaTalkVisual]);
 
   if (!tool) return null;
 
