@@ -398,6 +398,63 @@ export const WORK_PROVIDER_RESOURCE_TYPES: Record<
   lunatalk: ['lunatalk_mod', 'lunatalk_role', 'lunatalk_theme', 'lunatalk_worldbook'],
 };
 
+export type LunaTalkWorkKind = 'mod' | 'role' | 'theme' | 'worldbook';
+
+/**
+ * LunaTalk card-writer MCP tools whose SUCCESSFUL result mutates a creator
+ * resource, and which resource each one lands on. Reads (`*_get` / `*_find` /
+ * `*_list`), previews, validations and conversation tools are deliberately
+ * absent: they never become Works, which keeps the Works panel to "things that
+ * exist on LunaTalk" instead of a mirror of every tool call. Binding a theme /
+ * worldbook onto a role lands on the ROLE Work: the role is what changed.
+ * Shared by the server / client tag gates and the database normalizer.
+ */
+export const LUNATALK_WORK_TOOLS: Record<
+  string,
+  { changeType: WorkVersionChangeType; kind: LunaTalkWorkKind }
+> = {
+  mod_author_save: { changeType: 'updated', kind: 'mod' },
+  mod_create: { changeType: 'created', kind: 'mod' },
+  mod_submit: { changeType: 'updated', kind: 'mod' },
+  mod_unpublish: { changeType: 'updated', kind: 'mod' },
+  mod_update_apply: { changeType: 'updated', kind: 'mod' },
+  publish_submit: { changeType: 'updated', kind: 'role' },
+  role_create_private: { changeType: 'created', kind: 'role' },
+  role_generate_assets: { changeType: 'updated', kind: 'role' },
+  role_patch_assets: { changeType: 'updated', kind: 'role' },
+  role_patch_author_asset: { changeType: 'updated', kind: 'role' },
+  role_patch_detail: { changeType: 'updated', kind: 'role' },
+  role_patch_document: { changeType: 'updated', kind: 'role' },
+  role_patch_jailbreak: { changeType: 'updated', kind: 'role' },
+  role_patch_output_contract: { changeType: 'updated', kind: 'role' },
+  role_patch_preview_page: { changeType: 'updated', kind: 'role' },
+  role_patch_profile: { changeType: 'updated', kind: 'role' },
+  role_patch_talk_example: { changeType: 'updated', kind: 'role' },
+  role_patch_welcome: { changeType: 'updated', kind: 'role' },
+  role_reset_author_asset: { changeType: 'updated', kind: 'role' },
+  role_reset_preview_page: { changeType: 'updated', kind: 'role' },
+  role_set_visibility: { changeType: 'updated', kind: 'role' },
+  theme_bind: { changeType: 'updated', kind: 'role' },
+  theme_create: { changeType: 'created', kind: 'theme' },
+  theme_fork: { changeType: 'created', kind: 'theme' },
+  theme_patch_component: { changeType: 'updated', kind: 'theme' },
+  theme_submit: { changeType: 'updated', kind: 'theme' },
+  theme_unbind: { changeType: 'updated', kind: 'role' },
+  theme_update: { changeType: 'updated', kind: 'theme' },
+  worldbook_bind: { changeType: 'updated', kind: 'role' },
+  worldbook_create: { changeType: 'created', kind: 'worldbook' },
+  worldbook_entry_create: { changeType: 'updated', kind: 'worldbook' },
+  worldbook_entry_delete: { changeType: 'updated', kind: 'worldbook' },
+  worldbook_entry_reorder: { changeType: 'updated', kind: 'worldbook' },
+  worldbook_entry_update: { changeType: 'updated', kind: 'worldbook' },
+  worldbook_patch_document: { changeType: 'updated', kind: 'worldbook' },
+  worldbook_unbind: { changeType: 'updated', kind: 'role' },
+  worldbook_update: { changeType: 'updated', kind: 'worldbook' },
+};
+
+export const isLunaTalkWorkToolName = (toolName?: string | null): boolean =>
+  !!toolName && Object.prototype.hasOwnProperty.call(LUNATALK_WORK_TOOLS, toolName);
+
 /** Reverse lookup of `WORK_PROVIDER_RESOURCE_TYPES`, built once at module scope. */
 const RESOURCE_TYPE_TO_PROVIDER = new Map<string, WorkSkillProvider>(
   (

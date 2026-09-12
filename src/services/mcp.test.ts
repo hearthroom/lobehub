@@ -32,7 +32,28 @@ vi.mock('@lobechat/utils', () => ({
   }),
 }));
 
+const mockConnectorCallTool = vi.fn();
+const mockConnectorByIdentifier = vi.fn();
+const mockStashWorkIntent = vi.fn();
+
+vi.mock('@/store/tool/slices/connector', () => ({
+  connectorSelectors: {
+    connectorByIdentifier: (identifier: string) => () => mockConnectorByIdentifier(identifier),
+  },
+}));
+
+vi.mock('@/utils/clientWorkIntentStash', () => ({
+  stashWorkIntent: (...args: unknown[]) => mockStashWorkIntent(...args),
+}));
+
 vi.mock('@/libs/trpc/client', () => ({
+  lambdaClient: {
+    connector: {
+      callTool: {
+        mutate: (...args: unknown[]) => mockConnectorCallTool(...args),
+      },
+    },
+  },
   toolsClient: {
     market: {
       callCloudMcpEndpoint: {
@@ -81,9 +102,48 @@ describe('MCPService', () => {
     vi.clearAllMocks();
     vi.resetModules();
     mockGetToolStoreState.mockReturnValue({});
+    // Implementations survive clearAllMocks: no connector unless a test sets one.
+    mockConnectorByIdentifier.mockReset();
+    mockConnectorCallTool.mockReset();
+    mockStashWorkIntent.mockReset();
   });
 
   describe('invokeMcpToolCall', () => {
+    // LunaTalk card-writer connector writes must leave a Work intent for the
+    // runtime to register once the call's cost is known; reads must not.
+    it('stashes a lunatalk work intent for card-writer write tools on the connector path', async () => {
+      mockConnectorByIdentifier.mockReturnValue({
+        isEnabled: true,
+        mcpServerUrl: 'https://api.lunatalk.ai/mcp/card-writer',
+      });
+      const callResult = { content: '{"roleId":"role-1"}', state: { content: [] }, success: true };
+      mockConnectorCallTool.mockResolvedValue(callResult);
+
+      const write: ChatToolPayload = {
+        apiName: 'role_patch_detail',
+        arguments: '{"roleId":"role-1"}',
+        id: 'call-write',
+        identifier: 'lunatalk-card-writer',
+        type: 'default',
+      };
+      expect(await mcpService.invokeMcpToolCall(write, {})).toEqual(callResult);
+      expect(mockStashWorkIntent).toHaveBeenCalledWith('call-write', {
+        args: { roleId: 'role-1' },
+        data: callResult,
+        provider: 'lunatalk',
+        toolName: 'role_patch_detail',
+        type: 'skill',
+      });
+
+      mockStashWorkIntent.mockClear();
+      await mcpService.invokeMcpToolCall({ ...write, apiName: 'role_get', id: 'call-read' }, {});
+      expect(mockStashWorkIntent).not.toHaveBeenCalled();
+
+      mockConnectorCallTool.mockResolvedValue({ ...callResult, success: false });
+      await mcpService.invokeMcpToolCall({ ...write, id: 'call-failed' }, {});
+      expect(mockStashWorkIntent).not.toHaveBeenCalled();
+    });
+
     it('should invoke tool call with installed plugin', async () => {
       const { toolsClient } = await import('@/libs/trpc/client');
       const { discoverService } = await import('./discover');

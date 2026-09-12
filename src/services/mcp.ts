@@ -4,6 +4,7 @@ import {
   type CheckMcpInstallResult,
   type CustomPluginMetadata,
 } from '@lobechat/types';
+import { isLunaTalkWorkToolName } from '@lobechat/types';
 import { isLocalOrPrivateUrl, safeParseJSON } from '@lobechat/utils';
 import { deserializeMcpIpcPayload, serializeMcpIpcPayload } from '@lobechat/utils/mcpIpcPayload';
 import { type PluginManifest } from '@lobehub/market-sdk';
@@ -11,6 +12,7 @@ import { type CallReportRequest } from '@lobehub/market-types';
 
 import { type MCPToolCallResult } from '@/libs/mcp';
 import { toolsClient } from '@/libs/trpc/client';
+import { stashWorkIntent } from '@/utils/clientWorkIntentStash';
 import { ensureElectronIpc } from '@/utils/electron/ipc';
 
 import { discoverService } from './discover';
@@ -57,10 +59,23 @@ class MCPService {
       (connector.mcpServerUrl || connector.mcpConnectionType === 'stdio')
     ) {
       const { lambdaClient } = await import('@/libs/trpc/client');
-      return (await lambdaClient.connector.callTool.mutate(
+      const result = (await lambdaClient.connector.callTool.mutate(
         { args, identifier, toolName: apiName },
         { signal },
       )) as MCPToolCallResult;
+      // LunaTalk card-writer writes become Works: stash the intent (with the
+      // untruncated result) for the runtime to register once cost is known —
+      // the same deferred path lobehub skills (github / linear) use.
+      if (result?.success && isLunaTalkWorkToolName(apiName)) {
+        stashWorkIntent(payload.id, {
+          args: safeParseJSON(args) ?? undefined,
+          data: result,
+          provider: 'lunatalk',
+          toolName: apiName,
+          type: 'skill',
+        });
+      }
+      return result;
     }
 
     const installPlugin = pluginSelectors.getInstalledPluginById(identifier)(s);
